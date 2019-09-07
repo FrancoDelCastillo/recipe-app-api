@@ -20,4 +20,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # identify the user app and it will get the URLs module
     path('api/user/', include('user.urls')),
+    # map the urls correctly to our recipe
+    path('api/recipe/', include('recipe.urls')),
 ]

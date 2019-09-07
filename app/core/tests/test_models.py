@@ -1,7 +1,13 @@
 # verify user created as expected
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+# import the models module from our core app
+from core import models
 
+# helper function to create users
+def sample_user(email='test@email.com',password='test1234'):
+    # create sample user
+    return get_user_model().objects.create_user(email,password)
 
 class ModelTests(TestCase):
 
@@ -39,3 +45,14 @@ class ModelTests(TestCase):
         # assertion here
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
+
+    # creates a test model
+    def test_tag_str(self):
+        # test the tag string representation
+        tag = models.Tag.objects.create(
+            # calls the function and provides new user
+            user=sample_user(),
+            name='vegan'
+        )
+
+        self.assertEqual(str(tag),tag.name)
