@@ -9,6 +9,8 @@ from core.models import Tag
 
 # the tag serializer to make the test pass
 from recipe.serializers import TagSerializer
+
+
 # for listing tags
 TAGS_URL = reverse('recipe:tag-list')
 
@@ -72,4 +74,23 @@ class PrivateTagsApiTest(TestCase):
         # test the name of the tag returned in the one response
         self.assertEqual(res.data[0]['name'],tag.name)
 
+    def test_create_tag_successful(self):
+        # Test creating a new tag
+        payload = {'name':'test tag'}
+        self.client.post(TAGS_URL, payload)
+        # verify if the tag exists
+        exists = Tag.objects.filter(
+            # will filter all tags with the authenticated user 
+            # and with the name we create in our test
+            user=self.user,
+            name=payload['name']
+        # returns True or False
+        ).exists()
+        self.assertTrue(exists)
 
+    # test to see what happens if we create a tag with an invalid name
+    def test_create_tag_invalid(self):
+        # test creating a new tag invalid payload
+        payload = {'name':''}
+        res = self.client.post(TAGS_URL,payload)
+        self.assertEqual(res.status_code,status.HTTP_400_BAD_REQUEST)
