@@ -40,7 +40,9 @@ class TagViewSet(viewsets.GenericViewSet,
         serializer.save(user=self.request.user)
 
 # listmodelmixin to give us support to list ingredients
-class IngredientViewSet(viewsets.GenericViewSet,mixins.ListModelMixin):
+class IngredientViewSet(viewsets.GenericViewSet,
+                        mixins.ListModelMixin,
+                        mixins.CreateModelMixin):
     # Manage ingredients in the database
     # add our authentication classes with token auth
     authentication_classes = (TokenAuthentication,)
@@ -51,3 +53,7 @@ class IngredientViewSet(viewsets.GenericViewSet,mixins.ListModelMixin):
     def get_queryset(self):
         # Return objects for the current authenticated user
         return self.queryset.filter(user=self.request.user).order_by('-name')
+
+    def perform_create(self,serializer):
+        #create a new ingredient
+        serializer.save(user=self.request.user)
