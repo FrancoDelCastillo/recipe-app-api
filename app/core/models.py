@@ -59,7 +59,7 @@ class Tag(models.Model):
         # the first argument is the model we want to base the foreing key off
         settings.AUTH_USER_MODEL,
         # specify what we want to happens to the tags when we delete a user
-        on_delete = models.CASCADE,
+        on_delete = models.CASCADE
     )
 
     # string representation of the model
@@ -73,8 +73,28 @@ class Ingredient(models.Model):
     name = models.CharField(max_length=255)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
+        on_delete=models.CASCADE
     )
 
     def __str__(self):
         return self.name
+
+
+class Recipe(models.Model):
+    # Recipe object
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+    title = models.CharField(max_length=255)
+    time_minutes = models.IntegerField()
+    price = models.DecimalField(max_digits=5,decimal_places=2)
+    # optional field with blank
+    # with null we have to check if the field is blank or has a value
+    link = models.CharField(max_length=255,blank=True)
+    # many to many fields as Foreign key and the name of the class as parameter
+    ingredients = models.ManyToManyField('Ingredient')
+    tags = models.ManyToManyField('Tag')
+
+    def __str__(self):
+        return self.title
