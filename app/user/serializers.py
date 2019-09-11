@@ -7,26 +7,28 @@ from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
     # serializer for the user's object
-    
+
     # specify the class meta inside
     class Meta:
         # call the model to base our serializer
         model = get_user_model()
         # specify fields we want to include in
         # convert to and from json
-        fields = ('email','password','name')
+        fields = ('email', 'password', 'name')
         # configure extra settings in our model
-        extra_kwargs = {'password':{'write_only':True, 'min_length':5}}
+        extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
+
     # we can override the create function
     def create(self, validated_data):
         # create new user with encrypted password an return it
         # validated_data would be the json data passed as argument
         return get_user_model().objects.create_user(**validated_data)
+
     # update function, instance is linked to our model serializer
     def update(self, instance, validated_data):
         # Update a user, setting the password correctly and return it
         # remove the password, with pop we provide a default value
-        password = validated_data.pop('password',None)
+        password = validated_data.pop('password', None)
         # with super we call the user serializers update function
         user = super().update(instance, validated_data)
 
@@ -41,11 +43,11 @@ class AuthTokenSerializer(serializers.Serializer):
     # Serializer for the user authentication object
     email = serializers.CharField()
     password = serializers.CharField(
-        style={'input_type':'password'},
+        style={'input_type': 'password'},
         # allow whitespace inside passwords
         trim_whitespace=False
     )
-    
+
     # attrs is every field that makes up our serializer as dictionary
     def validate(self, attrs):
         # validate and authenticate the user
@@ -55,7 +57,7 @@ class AuthTokenSerializer(serializers.Serializer):
         user = authenticate(
             # accesing the context request
             # passes the context into the serializer
-            request = self.context.get('request'),
+            request=self.context.get('request'),
             username=email,
             password=password
         )

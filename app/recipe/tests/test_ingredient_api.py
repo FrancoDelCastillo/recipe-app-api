@@ -11,25 +11,27 @@ from recipe.serializers import IngredientSerializer
 
 
 # create our URL
-
 INGREDIENTS_URL = reverse('recipe:ingredient-list')
+
 
 class PublicIngredientsAPiTest(TestCase):
     # Test the publicly available ingredients API
 
     def setUp(self):
         self.client = APIClient()
-    
+
     def test_login_required(self):
         # test that login is required to access the endpoint
         # make the get request to the url
         res = self.client.get(INGREDIENTS_URL)
 
-        self.assertEqual(res.status_code,status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
 
 # testing listing our ingredients
 class PrivateIngredientsApiTest(TestCase):
     # Test the private ingredients API
+
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
@@ -48,9 +50,9 @@ class PrivateIngredientsApiTest(TestCase):
         # we retrieve all the ingredients, serialize them and then
         # compare the result to the serialized ingredients
         ingredients = Ingredient.objects.all().order_by('-name')
-        serializer = IngredientSerializer(ingredients,many=True)
+        serializer = IngredientSerializer(ingredients, many=True)
 
-        self.assertEqual(res.status_code,status.HTTP_200_OK)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
     def test_retrieve_ingredients_limited_to_user(self):
@@ -69,24 +71,24 @@ class PrivateIngredientsApiTest(TestCase):
 
         res = self.client.get(INGREDIENTS_URL)
 
-        self.assertEqual(res.status_code,status.HTTP_200_OK)
-        self.assertEqual(len(res.data),1)
-        self.assertEqual(res.data[0]['name'],ingredient.name)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res.data), 1)
+        self.assertEqual(res.data[0]['name'], ingredient.name)
 
     def test_create_ingredient_successful(self):
         # test create a new ingredient
-        payload = {'name':'cabbage'}
-        self.client.post(INGREDIENTS_URL,payload)
+        payload = {'name': 'cabbage'}
+        self.client.post(INGREDIENTS_URL, payload)
 
         exists = Ingredient.objects.filter(
             user=self.user,
             name=payload['name'],
         ).exists()
         self.assertTrue(exists)
-    
+
     def test_create_ingredient_invalid(self):
         # Test creating invalid ingredient fails
-        payload = {'name':''}
-        res = self.client.post(INGREDIENTS_URL,payload)
+        payload = {'name': ''}
+        res = self.client.post(INGREDIENTS_URL, payload)
 
-        self.assertEqual(res.status_code,status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)

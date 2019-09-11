@@ -4,10 +4,12 @@ from django.contrib.auth import get_user_model
 # import the models module from our core app
 from core import models
 
+
 # helper function to create users
-def sample_user(email='test@email.com',password='test1234'):
+def sample_user(email='test@email.com', password='test1234'):
     # create sample user
-    return get_user_model().objects.create_user(email,password)
+    return get_user_model().objects.create_user(email, password)
+
 
 class ModelTests(TestCase):
 
@@ -55,7 +57,7 @@ class ModelTests(TestCase):
             name='vegan'
         )
 
-        self.assertEqual(str(tag),tag.name)
+        self.assertEqual(str(tag), tag.name)
 
     def test_ingredient_str(self):
         # Test the ingredient string representation
@@ -64,8 +66,8 @@ class ModelTests(TestCase):
             user=sample_user(),
             name='cucumber'
         )
-        
-        self.assertEqual(str(ingredient),ingredient.name)
+
+        self.assertEqual(str(ingredient), ingredient.name)
 
     def test_recipe_str(self):
         # Tes the recipe string representacion
@@ -73,7 +75,7 @@ class ModelTests(TestCase):
             user=sample_user(),
             title='ceviche',
             time_minutes=10,
-            price=20.00 
+            price=20.00
         )
 
-        self.assertEqual(str(recipe),recipe.title)
+        self.assertEqual(str(recipe), recipe.title)

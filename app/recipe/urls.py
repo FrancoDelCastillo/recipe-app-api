@@ -4,12 +4,14 @@ from rest_framework.routers import DefaultRouter
 
 from recipe import views
 
-# when you have a viewset you may have multiple URLs associated with that one viewset
+# viewset may have multiple URLs associated with one viewset
 
 router = DefaultRouter()
 # register our views
-router.register('tags',views.TagViewSet)
+router.register('tags', views.TagViewSet)
 router.register('ingredients', views.IngredientViewSet)
+router.register('recipe', views.RecipeViewSet)
+
 # define the app name
 app_name = 'recipe'
 

@@ -14,6 +14,7 @@ from recipe.serializers import TagSerializer
 # for listing tags
 TAGS_URL = reverse('recipe:tag-list')
 
+
 # Test login required
 class PublicTagsApiTest(TestCase):
     # Test the publicly available tags API
@@ -27,7 +28,8 @@ class PublicTagsApiTest(TestCase):
         res = self.client.get(TAGS_URL)
 
         # verify this returns HTTP_401
-        self.assertEqual(res.status_code,status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
 
 class PrivateTagsApiTest(TestCase):
     # Test the authorized user tags API
@@ -49,11 +51,11 @@ class PrivateTagsApiTest(TestCase):
         # make the query on the model, reverse order by name
         tags = Tag.objects.all().order_by('-name')
         # serialize a list of objects many = True
-        serializer = TagSerializer(tags,many=True)
+        serializer = TagSerializer(tags, many=True)
 
-        self.assertEqual(res.status_code,status.HTTP_200_OK)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
         # data in the response is the same data in serializer
-        self.assertEqual(res.data,serializer.data)
+        self.assertEqual(res.data, serializer.data)
 
     def test_tags_limited_to_user(self):
         # test that tags returned are for the authenticated user
@@ -62,35 +64,35 @@ class PrivateTagsApiTest(TestCase):
             'other@email',
             'test1234'
         )
-        Tag.objects.create(user=user2,name='Fruity')
+        Tag.objects.create(user=user2, name='Fruity')
         # create a new tag assigned to authenticated user
         tag = Tag.objects.create(user=self.user, name='Comfort food')
         #
         res = self.client.get(TAGS_URL)
 
-        self.assertEqual(res.status_code,status.HTTP_200_OK)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
         # check the length of the result returned must be just one data
-        self.assertEqual(len(res.data),1)
+        self.assertEqual(len(res.data), 1)
         # test the name of the tag returned in the one response
-        self.assertEqual(res.data[0]['name'],tag.name)
+        self.assertEqual(res.data[0]['name'], tag.name)
 
     def test_create_tag_successful(self):
         # Test creating a new tag
-        payload = {'name':'test tag'}
+        payload = {'name': 'test tag'}
         self.client.post(TAGS_URL, payload)
         # verify if the tag exists
         exists = Tag.objects.filter(
-            # will filter all tags with the authenticated user 
+            # will filter all tags with the authenticated user
             # and with the name we create in our test
             user=self.user,
             name=payload['name']
-        # returns True or False
-        ).exists()
+            # returns True or False
+            ).exists()
         self.assertTrue(exists)
 
     # test to see what happens if we create a tag with an invalid name
     def test_create_tag_invalid(self):
         # test creating a new tag invalid payload
-        payload = {'name':''}
-        res = self.client.post(TAGS_URL,payload)
-        self.assertEqual(res.status_code,status.HTTP_400_BAD_REQUEST)
+        payload = {'name': ''}
+        res = self.client.post(TAGS_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)

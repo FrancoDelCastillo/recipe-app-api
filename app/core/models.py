@@ -6,6 +6,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
 # retrive our auth user model
 from django.conf import settings
 
+
 # Manage Class provides helper functions and overwrites to create user
 class UserManager(BaseUserManager):
     # Creates and saves a new user
@@ -59,7 +60,7 @@ class Tag(models.Model):
         # the first argument is the model we want to base the foreing key off
         settings.AUTH_USER_MODEL,
         # specify what we want to happens to the tags when we delete a user
-        on_delete = models.CASCADE
+        on_delete=models.CASCADE
     )
 
     # string representation of the model
@@ -88,10 +89,10 @@ class Recipe(models.Model):
     )
     title = models.CharField(max_length=255)
     time_minutes = models.IntegerField()
-    price = models.DecimalField(max_digits=5,decimal_places=2)
+    price = models.DecimalField(max_digits=5, decimal_places=2)
     # optional field with blank
     # with null we have to check if the field is blank or has a value
-    link = models.CharField(max_length=255,blank=True)
+    link = models.CharField(max_length=255, blank=True)
     # many to many fields as Foreign key and the name of the class as parameter
     ingredients = models.ManyToManyField('Ingredient')
     tags = models.ManyToManyField('Tag')
