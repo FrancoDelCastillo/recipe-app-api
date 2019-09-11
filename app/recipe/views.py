@@ -65,3 +65,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         # Retrieve the recipes for the authenticated user
         return self.queryset.filter(user=self.request.user)
+
+    # override get_serializer_class function
+    # this function is called to retrieve the serializer class
+    # we have a number of actions available by default in ModelViewSet
+    # 'retrieve' if we want to return DetailSerializer
+    def get_serializer_class(self):
+        # Return appropiate serializer class
+        # verify the action being used for our current request
+        if self.action == 'retrieve':
+            return serializers.RecipeDetailSerializer
+        
+        return self.serializer_class
