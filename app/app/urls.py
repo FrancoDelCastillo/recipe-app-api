@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -22,4 +24,6 @@ urlpatterns = [
     path('api/user/', include('user.urls')),
     # map the urls correctly to our recipe
     path('api/recipe/', include('recipe.urls')),
-]
+    # makes the media url available in a development server
+    # we can test uploading images without set up a separate web server
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

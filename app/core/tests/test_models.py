@@ -1,3 +1,4 @@
+from unittest.mock import patch
 # verify user created as expected
 from django.test import TestCase
 from django.contrib.auth import get_user_model
@@ -79,3 +80,22 @@ class ModelTests(TestCase):
         )
 
         self.assertEqual(str(recipe), recipe.title)
+
+    #uuid module, uuid4 function to generate unique uid
+    @patch('uuid.uuid4')
+    def test_recipe_file_name_uuid(self, mock_uuid):
+        # test that image is saved in the correct location
+        # mock the uid function from the default uid library
+        # and change the value that returns
+        uuid = 'test-uuid'
+        # anytime we call uuid4 that is triggered from with in our test
+        # it will change the value
+        # overwrite the default behavior and return 'test-uuid'
+        mock_uuid.return_value = uuid
+        file_path = models.recipe_image_file_patch(None, 'myimage.jpg')
+        # expected path
+        # literal string interpelation
+        # insert variables inside string
+        exp_path = f'uploads/recipe/{uuid}.jpg'
+
+        self.assertEqual(file_path, exp_path)

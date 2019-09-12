@@ -1,3 +1,5 @@
+import uuid
+import os
 from django.db import models
 # we need this to create or user manager class
 # to extend our user model with import
@@ -5,6 +7,15 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
                                         PermissionsMixin
 # retrive our auth user model
 from django.conf import settings
+
+def recipe_image_file_patch(instance, filename):
+    # Generate file path for new recipe image
+    # split in list separated by .
+    # [-1] slice the list and return the last item (jpg)
+    ext = filename.split('.')[-1]
+    filename = f'{uuid.uuid4()}.{ext}'
+
+    return os.path.join('uploads/recipe/', filename)
 
 
 # Manage Class provides helper functions and overwrites to create user
@@ -96,6 +107,7 @@ class Recipe(models.Model):
     # many to many fields as Foreign key and the name of the class as parameter
     ingredients = models.ManyToManyField('Ingredient')
     tags = models.ManyToManyField('Tag')
+    image = models.ImageField(null=True, upload_to=recipe_image_file_patch)
 
     def __str__(self):
         return self.title
