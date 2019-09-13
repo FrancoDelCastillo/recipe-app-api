@@ -8,6 +8,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
 # retrive our auth user model
 from django.conf import settings
 
+
 def recipe_image_file_patch(instance, filename):
     # Generate file path for new recipe image
     # split in list separated by .
@@ -18,7 +19,7 @@ def recipe_image_file_patch(instance, filename):
     return os.path.join('uploads/recipe/', filename)
 
 
-# Manage Class provides helper functions and overwrites to create user
+# Manage Class provides helper functions and overrides to create user
 class UserManager(BaseUserManager):
     # Creates and saves a new user
     # **extra_fields adds additional fields to our model
