@@ -27,12 +27,25 @@ class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
 
     # function to override the get query set function
     def get_queryset(self):
+        # convert our query param to int then to boolean
+        # default value 0
+        assigned_only = bool(
+            int(self.request.query_params.get('assigned_only', 0))
+        )
+        queryset = self.queryset
+        if assigned_only:
+            # __isnull returns only tags/ingredients assigned to recipe
+            queryset = queryset.filter(recipe__isnull=False)
+
         # Return objects for the current authenticated user only
         # the request objects should be passed in to the self
         # as a class variable
         # then the user should be assigned to that
         # because authentication is required
-        return self.queryset.filter(user=self.request.user).order_by('-name')
+        return queryset.filter(
+            user=self.request.user
+            # add distinct function to make sure the queryset is unique
+            ).order_by('-name').distinct()
 
     # hook into the create process when creating an object
     # when we do a create object in our viewset this function will be invoked
